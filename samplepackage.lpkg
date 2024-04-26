@@ -1,15 +1,27 @@
-var name = "samplepackage" // THIS SHOULD BE ALL LOWERCASE, NO SPACE
-var desc = "Sample Package. Not much to it."
-var version = "1.2.4"
-var tarball = `https://git.musl-libc.org/cgit/musl/snapshot/musl-${version}.tar.gz`
-var deps = ["kati"]
-
-var build = [
-    `cd musl-${version}`,
-    "chmod +x ./configure",
-    "CC=$CC CXX=$CXX CFLAGS=$CFLAGS LDFLAGS=$LDFLAGS ./configure",
-    "make $MKFLAGS"
-]
-var install = [
-    "make install DESTDIR=$DEST"
-]
+# luna package format
+to define a string: s stringname "stringval"
+to define an array: a arrayname ("val1" "val2")
+to define a function:
+    f funcname {
+        command1
+        command2
+    }
+    (notice how there aren't any quotes in the function. it is separated by newline)
+to call a function: $funcname
+to end a comment, use:
+!ec
+s name "samplepkg"
+s description "a sample package. nothing special"
+s version "v1"
+a deps ("lmake" "zig")
+f build {
+    make something
+}
+f install {
+    install something
+}
+# this is what luna will execute. !ec
+f run {
+    $build
+    $install
+}

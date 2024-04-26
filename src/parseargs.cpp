@@ -85,6 +85,7 @@ bool ParseArgs::parseArgs(std::vector<std::string> argsin)
 			std::vector<std::string> namessplit = splitstr(arg.names, "|");
 			namessplit.back() = "or " + namessplit.back();
 			log(LogLevel::INFO, "{}     {}", joinstr(namessplit, ", "), arguments.at(i).desc);
+			matched = true;
 		}
 		std::vector<std::string> indivargs = splitstr(arguments.at(i).names, "|");
 		for (int j = 0; j < indivargs.size(); ++j)

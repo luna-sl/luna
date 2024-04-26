@@ -22,9 +22,8 @@ int main(int argc, char *argv[])
 	ARGC = argc;
 	ARGV = argv;
 	std::vector<std::string> arguments(argv + 1, argv + argc);
-	liblpkg::parse_lpkg_from_file("/run/media/ech0/hentai/Projects/luna/samplepackage.lpkg");
 	ParseArgs pa;
-	pa.addArgument("-i|--install|install|-S", "installs a package", &install::installPackage, Arg::KEEP_ON_MATCH);
+	pa.addArgument("-i|--install|install|-S", "installs a package", &install::installPackage);
 	pa.addArgument("-u|--update|update|-y", "updates the repos", &update::updateRepos);
 	pa.addArgument("-d|--doctor|doctor", "performs a lunapm health check", &doctor::runDoctor);
 	pa.setFlags(ParseArgs::STOP_ON_MATCH);

@@ -8,8 +8,9 @@ to define a function:
     }
     (notice how there aren't any quotes in the function. it is separated by newline)
 to call a function: $funcname
+to read a string: @stringname
 to end a comment, use:
-!ec
+!
 s name "samplepkg"
 s description "a sample package. nothing special"
 s version "v1"
@@ -20,7 +21,7 @@ f build {
 f install {
     install something
 }
-# this is what luna will execute. !ec
+# this is what luna will execute. !
 f run {
     $build
     $install

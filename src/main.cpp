@@ -6,8 +6,9 @@
 #include "parseargs.hpp"
 #include "update.hpp"
 #include <deque>
-#include <iostream>
+#include <fstream>
 #include <unistd.h>
+#include "parselpkg.hpp"
 #define VERS "v0.1"
 
 int ARGC;
@@ -15,6 +16,10 @@ char **ARGV;
 
 int main(int argc, char *argv[])
 {
+	std::ifstream file("/run/media/ech0/hentai/Projects/luna/samplepackage.lpkg");
+	ParseLpkg parse(file);
+	parse.parse();
+	file.close();
 	if (argc <= 1)
 	{
 		log(LogLevel::FATAL, "no arguments provided");

@@ -1,5 +1,3 @@
-#include "jerryscript-core.h"
-#include "jerryscript.h"
 #include "logger.hpp"
 #include <parseargs.hpp>
 #include <string>

@@ -4,6 +4,7 @@
 #include <deque>
 #include <optional>
 #include <string>
+#include <algorithm>
 
 Arg::Arg(std::string names, std::string desc, Func func, int flags)
 {

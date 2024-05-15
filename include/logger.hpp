@@ -3,6 +3,7 @@
 #include <deque>
 #include <functional>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 enum LogLevel
 {
@@ -28,6 +29,9 @@ template <typename... Args> void log(LogLevel lv, std::string fmt, Args... args)
 		case FATAL:
 			pretty += color(255, 255, 255) + colorBg(235, 80, 80) + bold() + "fatal" + colorTerminate();
 			break;
+		case DEBUG:
+			pretty += color(127, 127, 127) + colorBg(164, 164, 164) + bold() + "dbg" + colorTerminate();
+			break;
 		default:
 			break;
 	}
@@ -40,7 +44,7 @@ template <typename... Args> void log(LogLevel lv, std::string fmt, Args... args)
 
 	if (lv == LogLevel::FATAL)
 	{
-		throw std::runtime_error("a fatal exception has occurred. if you believe that this is not user error, run luna "
+		throw std::logic_error("a fatal exception has occurred. if you believe that this is not user error, run luna "
 								 "--doctor before making an issue.");
 	}
 }

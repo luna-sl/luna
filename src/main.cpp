@@ -1,6 +1,5 @@
 #include "doctor.hpp"
 #include "install.hpp"
-#include "liblpkg.hpp"
 #include "logger.hpp"
 #include "lutils.hpp"
 #include "parseargs.hpp"

@@ -16,7 +16,7 @@ namespace install
 void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
 {
     Loader L = Loader();
-    L.doLoader(format("installing {}", pkg["name"]), [](){
+    L.doLoader(format("installing {}", "packagename"), [](){
         cpr::Response file = cpr::Get(cpr::Url{});
     }, pkg);
 }

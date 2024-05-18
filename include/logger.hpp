@@ -44,8 +44,8 @@ template <typename... Args> void log(LogLevel lv, std::string fmt, Args... args)
 
 	if (lv == LogLevel::FATAL)
 	{
-		throw std::logic_error("a fatal exception has occurred. if you believe that this is not user error, run luna "
-								 "--doctor before making an issue.");
+		std::cout << "a fatal exception has occurred. if you believe that this is not user error, run luna --doctor before making an issue." << std::endl;
+		exit(-1);
 	}
 }
 template <typename... Args> void log(bool shouldLog, LogLevel lv, std::string fmt, Args... args)

@@ -9,15 +9,17 @@ to define a function:
     (notice how there aren't any quotes in the function. it is separated by newline)
 to end a comment, use:
 !
-s name "samplepkg"
-s description "a sample package. nothing special"
+s name "yash"
+s description "yash"
 # should always be a tarball !
-s source "https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.5.tar.gz"
+s source "https://github.com/magicant/yash/releases/download/2.56.1/yash-2.56.1.tar.gz"
 s version "v1"
 a deps ("lmake" "zig")
 f build {
-    make something
+    cd yash-*
+    ./configure
+    make
 }
 f install {
-    install something
+    make install
 }

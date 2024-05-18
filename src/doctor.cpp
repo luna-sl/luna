@@ -4,6 +4,7 @@
 #include "lutils.hpp"
 #include "parseargs.hpp"
 #include <filesystem>
+#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,31 +15,32 @@ void runDoctor(std::vector<std::string> args)
 	ParseArgs pa;
 	pa.checkUnrecognized(args);
 	privEsc();
-	Loader("running doctor", [](Loader &l) {
+	Loader L = Loader();
+	std::function<void()> func = [&]() {
 		int issues = 0;
 		if (!std::filesystem::exists("/etc/luna/"))
 		{
 			++issues;
-			l.setProgress("creating /etc/luna/");
+			L.setProgress("creating /etc/luna/");
 			std::filesystem::create_directory("/etc/luna");
 		}
 		if (!std::filesystem::exists("/var/lib/luna/repos.d/"))
 		{
 			++issues;
-			l.setProgress("creating /var/lib/luna/repos.d/");
+			L.setProgress("creating /var/lib/luna/repos.d/");
 			std::filesystem::create_directories("/var/lib/luna/repos.d/");
 		}
 		if (!std::filesystem::exists("/etc/luna/repos.conf"))
 		{
 			++issues;
-			l.setProgress("getting repos.conf");
+			L.setProgress("getting repos.conf");
 			cpr::Response r =
 				cpr::Get(cpr::Url{"https://raw.githubusercontent.com/luna-lnx/repo/main/repos.conf.defaults"});
 			log(
-				r.error.code != cpr::ErrorCode::OK, [&l]() { l.fail(); }, LogLevel::FATAL,
+				r.error.code != cpr::ErrorCode::OK, [&L]() { L.fail(); }, LogLevel::FATAL,
 				"failed to get {} because: {}", r.url.str().substr(r.url.str().find_last_of("/") + 1), r.error.message);
 			log(
-				r.status_code != 200, [&l]() { l.fail(); }, LogLevel::FATAL,
+				r.status_code != 200, [&L]() { L.fail(); }, LogLevel::FATAL,
 				"failed to get {} because request failed with response code: {}",
 				r.url.str().substr(r.url.str().find_last_of("/") + 1), r.status_code);
 			std::ofstream reposConfOut("/etc/luna/repos.conf");
@@ -48,7 +50,8 @@ void runDoctor(std::vector<std::string> args)
 		log(issues > 0, LogLevel::INFO, "fixed {}{}{} issue(s)", color(255, 145, 145) + bold(), issues,
 			colorTerminate());
 		log(issues == 0, LogLevel::INFO, "found {}no{} issues (yay)", color(125, 255, 125) + bold(), colorTerminate());
-	});
+	};
+	L.doLoader("running doctor", func);
 }
 } // namespace doctor
   // https://raw.githubusercontent.com/luna-lnx/repo/main/repos.conf.defaults

@@ -6,8 +6,7 @@
 class Loader
 {
   public:
-	template <typename... Args, typename... FArgs>
-	void doLoader(std::string taskName, std::function<void(Args...)> task, FArgs...);
+	void doLoader(std::string taskName, std::function<void()>& task);
 	void setProgress(std::string progress);
 	void fail();
 

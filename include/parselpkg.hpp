@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace Lpkg
@@ -16,10 +17,14 @@ enum Type
 };
 class Value
 {
+
   private:
 	Type ty;
 
   public:
+	virtual ~Value()
+	{
+	}
 	Value(Type ty) : ty(ty)
 	{
 	}
@@ -73,7 +78,7 @@ class Function : public Value
 		return contents;
 	}
 };
-using Lpkg = std::map<std::string, Value>;
+using Lpkg = std::map<std::string, std::variant<Lpkg::String, Lpkg::Array, Lpkg::Function>>;
 } // namespace Lpkg
 class ParseLpkg
 {

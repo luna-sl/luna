@@ -18,7 +18,8 @@ void updateRepos(std::vector<std::string> args)
 	pa.checkUnrecognized(args);
 	pa.parseArgs(args);
 	privEsc();
-	Loader ld("updating repos", [](Loader &l) {
+	Loader L = Loader();
+	std::function<void()> func = [&]() {
 		std::ifstream reposListFile("/etc/luna/repos.conf");
 		if (reposListFile.is_open())
 		{
@@ -28,14 +29,14 @@ void updateRepos(std::vector<std::string> args)
 			std::vector<std::string> reposList = splitstr(tmp, "\n");
 			for (int i = 0; i < reposList.size(); ++i)
 			{
-				l.setProgress(format("{}/{}", i + 1, reposList.size()));
+				L.setProgress(format("{}/{}", i + 1, reposList.size()));
 				cpr::Response r = cpr::Get(cpr::Url{reposList.at(i)});
 				log(
-					r.error.code != cpr::ErrorCode::OK, [&l]() { l.fail(); }, LogLevel::FATAL,
+					r.error.code != cpr::ErrorCode::OK, [&L]() { L.fail(); }, LogLevel::FATAL,
 					"failed to get {} because: {}", r.url.str().substr(r.url.str().find_last_of("/") + 1),
 					r.error.message);
 				log(
-					r.status_code != 200, [&l]() { l.fail(); }, LogLevel::FATAL,
+					r.status_code != 200, [&L]() { L.fail(); }, LogLevel::FATAL,
 					"failed to get {} because request failed with response code: {}",
 					r.url.str().substr(r.url.str().find_last_of("/") + 1), r.status_code);
 				std::ofstream repoOut(
@@ -47,15 +48,16 @@ void updateRepos(std::vector<std::string> args)
 				}
 				else
 				{
-					log([&l]() { l.fail(); }, LogLevel::FATAL, "repoOut not open");
+					log([&L]() { L.fail(); }, LogLevel::FATAL, "repoOut not open");
 				}
 			}
 		}
 		else
 		{
-			log([&l]() { l.fail(); }, LogLevel::FATAL, "reposListFile not open");
+			log([&L]() { L.fail(); }, LogLevel::FATAL, "reposListFile not open");
 		}
 		reposListFile.close();
-	});
+	};
+	L.doLoader("updating repos", func);
 }
 } // namespace update

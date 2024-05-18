@@ -7,8 +7,9 @@
 #include <stdio.h>
 #include <string>
 #include <thread>
-template <typename... Args, typename ... FArgs> void Loader::doLoader(std::string taskName, std::function<void(Args...)> task, FArgs... fargs)
+void Loader::doLoader(std::string taskName, std::function<void()> &task)
 {
+
 	this->taskName = taskName;
 	std::thread loader(
 		[this](std::atomic<bool> &stopping, std::atomic<bool> &failing) {
@@ -34,7 +35,7 @@ template <typename... Args, typename ... FArgs> void Loader::doLoader(std::strin
 		},
 		std::ref(stopping), std::ref(failing));
 
-	task(*this, std::forward<FArgs>(fargs)...);
+	task();
 	stopping.store(true);
 	loader.join();
 }

@@ -16,6 +16,7 @@ std::string colorBg(u_int8_t r, u_int8_t g, u_int8_t b);
 std::string gradient(std::string input, u_int8_t fro[3], u_int8_t to[3], bool bg);
 std::string bold();
 std::string colorTerminate();
+void extract(const char *filename, int flags, const char *destdir);
 void privEsc();
 
 // what does this do again lmao

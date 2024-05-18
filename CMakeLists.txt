@@ -4,7 +4,6 @@ project(luna)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
 include(FetchContent)
 
 set(BUILD_SHARED_LIBS OFF)
@@ -17,6 +16,13 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(cpr)
+FetchContent_Declare(
+    libarchive
+    GIT_REPOSITORY https://github.com/libarchive/libarchive.git
+    GIT_TAG 8fc0569bab522212fd593210e5a88e07918cbd5e
+)
+
+FetchContent_MakeAvailable(libarchive)
 
 include_directories(include)
 
@@ -24,7 +30,8 @@ file(GLOB SOURCES "src/*.cpp")
 message(Sources ${SOURCES})
 add_executable(luna ${SOURCES})
 
-target_link_libraries(luna PRIVATE cpr c++ c++abi)
+target_link_libraries(luna PRIVATE cpr archive_static c++ c++abi)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fPIC")
+set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fPIC" )
 set(CMAKE_EXE_LINKER_FLAGS "-flto=full")

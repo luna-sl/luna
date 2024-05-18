@@ -12,13 +12,14 @@
 #include <string>
 #include <typeinfo>
 #include <vector>
-
 namespace install
 {
 void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
 {
+
 	Loader L = Loader();
 	std::function<void()> func = [&]() {
+        L.setProgress("downloading tarball");
 		cpr::Response r = cpr::Get(cpr::Url{std::get<Lpkg::String>(pkg.at("source")).getContents()});
 		log(
 			r.error.code != cpr::ErrorCode::OK, [&L]() { L.fail(); }, LogLevel::FATAL, "failed to get {} because: {}",
@@ -27,7 +28,8 @@ void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
 			r.status_code != 200, [&L]() { L.fail(); }, LogLevel::FATAL,
 			"failed to get {} because request failed with response code: {}",
 			r.url.str().substr(r.url.str().find_last_of("/") + 1), r.status_code);
-		std::ofstream sourceOut(format("/tmp/{}", r.url.str().substr(r.url.str().find_last_of("/") + 1)));
+        std::string path = format("/tmp/{}", r.url.str().substr(r.url.str().find_last_of("/") + 1));
+		std::ofstream sourceOut(path);
 		if (sourceOut.is_open())
 		{
 			sourceOut << r.text;
@@ -37,6 +39,8 @@ void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
 		{
 			log([&L]() { L.fail(); }, LogLevel::FATAL, "sourceOut not open");
 		}
+        L.setProgress("extracting tarball");
+        extract(path.c_str(), 0, format("/tmp/luna/build/{}/", std::get<Lpkg::String>(pkg.at("name")).getContents()).c_str());
 	};
 	L.doLoader(format("installing {}", std::get<Lpkg::String>(pkg.at("name")).getContents()), func);
 }

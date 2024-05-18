@@ -11,6 +11,8 @@ to end a comment, use:
 !
 s name "samplepkg"
 s description "a sample package. nothing special"
+# should always be a tarball !
+s source "https://git.musl-libc.org/cgit/musl/snapshot/musl-1.2.5.tar.gz"
 s version "v1"
 a deps ("lmake" "zig")
 f build {

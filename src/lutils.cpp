@@ -1,6 +1,7 @@
 #include "lutils.hpp"
 #include "logger.hpp"
 #include "main.hpp"
+#include "parselpkg.hpp"
 #include <algorithm>
 #include <cmath>
 #include <string>

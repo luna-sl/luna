@@ -3,9 +3,9 @@
 #include "lutils.hpp"
 #include <fstream>
 #include <map>
+#include <regex>
 #include <stdexcept>
 #include <string>
-#include <regex>
 #include <vector>
 class Lpkg {
       private:
@@ -19,7 +19,10 @@ class Lpkg {
 		try {
 			return values.at(key);
 		} catch (std::out_of_range ex) {
-			log(LogLevel::FATAL, "value {} in {} does not exist. this is an issue with the package, not luna.", key, filename);
+			log(LogLevel::FATAL,
+			    "value {} in {} does not exist. this is an issue "
+			    "with the package, not luna.",
+			    key, filename);
 			return 0;
 		}
 	}
@@ -33,21 +36,23 @@ class ParseLpkg {
 	std::string filename;
 
       public:
-	ParseLpkg(std::string filename)
-	    : filename(filename) {}
+	ParseLpkg(std::string filename) : filename(filename) {}
 	Lpkg parse() {
 		Lpkg result;
 		stream = std::ifstream(filename);
 		result.setFilename(filename);
 		std::string line;
-		std::regex pattern(R"(^[a-zA-Z_][a-zA-Z0-9_]*=)"); 
-		if(stream.good()){
+		std::regex pattern(R"(^[a-zA-Z_][a-zA-Z0-9_]*=)");
+		if (stream.good()) {
 			while (getline(stream, line)) {
-			if(std::regex_search(line, pattern)){
-				std::vector<std::string> split = splitstr(line, "=");
-				result.addValue(split.at(0), split.at(1));
+				if (std::regex_search(line, pattern)) {
+					std::vector<std::string> split =
+					    splitstr(line, "=");
+					result.addValue(
+					    split.at(0),
+					    replace(split.at(1), "\"", ""));
+				}
 			}
-		}
 		}
 		stream.close();
 		return result;

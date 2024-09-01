@@ -141,6 +141,8 @@ void extract(const char *filename, int flags, const char *destdir) {
 	 */
 	archive_read_support_format_tar(a);
 	archive_read_support_filter_gzip(a);
+	archive_read_support_filter_xz(a);
+	archive_read_support_filter_bzip2(a);
 	/*
 	 * On my system, enabling other archive formats adds 20k-30k
 	 * each.  Enabling gzip decompression adds about 20k.

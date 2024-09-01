@@ -1,5 +1,6 @@
 #include "doctor.hpp"
 #include "install.hpp"
+#include "internals.hpp"
 #include "logger.hpp"
 #include "update.hpp"
 #include <cxxopts.hpp>
@@ -22,6 +23,9 @@ int main(int argc, char *argv[]) {
 	    "u,update", "updates repository list")(
 	    "d,doctor", "check for issues with your luna installation")(
 	    "h,help", "prints this message");
+	options.add_options("internal")("fetch-tarball",
+					"fetches a tarball and extracts it.",
+					cxxopts::value<std::string>(), "link");
 	cxxopts::ParseResult result;
 	try {
 		result = options.parse(argc, argv);
@@ -41,6 +45,9 @@ int main(int argc, char *argv[]) {
 	}
 	if (result.count("install")) {
 		install::installPackage(result);
+	}
+	if (result.count("fetch-tarball")) {
+		fetchTarball(result["fetch-tarball"].as<std::string>());
 	}
 	return 0;
 }

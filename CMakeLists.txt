@@ -45,4 +45,4 @@ target_link_libraries(luna PRIVATE cpr archive_static cxxopts c++ c++abi)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Oz -fPIC -ffast-math -Wl,--gc-sections -mllvm -inline-threshold=0 ")
 set(CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fPIC" )
 
-set(CMAKE_EXE_LINKER_FLAGS "-flto=full -s")
+set(CMAKE_EXE_LINKER_FLAGS "-flto=full -s -fPIC")

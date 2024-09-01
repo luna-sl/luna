@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 
-namespace doctor
-{
+namespace doctor {
 void runDoctor();
 } // namespace doctor

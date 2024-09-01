@@ -1,10 +1,9 @@
 #pragma once
 
+#include <cxxopts.hpp>
 #include <string>
 #include <vector>
-#include <cxxopts.hpp>
 
-namespace install
-{
+namespace install {
 void installPackage(cxxopts::ParseResult args);
 }

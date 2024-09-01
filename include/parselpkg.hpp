@@ -3,129 +3,53 @@
 #include "lutils.hpp"
 #include <fstream>
 #include <map>
+#include <stdexcept>
 #include <string>
-#include <variant>
+#include <regex>
 #include <vector>
-
-namespace Lpkg {
-enum Type { STRING, ARRAY, FUNCTION };
-class Value {
-
+class Lpkg {
       private:
-	Type ty;
+	std::string filename;
+	std::map<std::string, std::string> values{};
 
       public:
-	virtual ~Value() {}
-	Value(Type ty) : ty(ty) {}
-	Type getType() { return ty; }
+	std::string getFilename() { return filename; }
+	void setFilename(std::string filename) { this->filename = filename; }
+	std::string getValue(std::string key) {
+		try {
+			return values.at(key);
+		} catch (std::out_of_range ex) {
+			log(LogLevel::FATAL, "value {} in {} does not exist. this is an issue with the package, not luna.", key, filename);
+			return 0;
+		}
+	}
+	void addValue(std::string key, std::string value) {
+		values[key] = value;
+	}
 };
-class String : public Value {
-      private:
-	std::string contents;
-	typedef Value super;
-
-      public:
-	String(std::string content) : super(Type::STRING), contents(content) {}
-	std::string getContents() { return contents; }
-};
-class Array : public Value {
-      private:
-	std::vector<std::string> contents;
-	typedef Value super;
-
-      public:
-	Array(std::vector<std::string> content)
-	    : super(Type::ARRAY), contents(content) {}
-	std::vector<std::string> getContents() { return contents; }
-};
-class Function : public Value {
-      private:
-	std::vector<std::string> contents;
-	typedef Value super;
-
-      public:
-	Function(std::vector<std::string> content)
-	    : super(Type::FUNCTION), contents(content) {}
-	std::vector<std::string> getContents() { return contents; }
-};
-using Lpkg = std::map<std::string,
-		      std::variant<Lpkg::String, Lpkg::Array, Lpkg::Function>>;
-} // namespace Lpkg
 class ParseLpkg {
       private:
-	std::ifstream &stream;
-	char currentTok;
-	std::string runtotok(char target) {
-		std::string skipped = "";
-		while (stream.get(currentTok)) {
-			if (currentTok == target) {
-				break;
-			} else {
-				skipped += currentTok;
-			}
-		}
-		return skipped;
-	}
+	std::ifstream stream;
+	std::string filename;
 
       public:
-	ParseLpkg(std::ifstream &stream) : stream(stream) {}
-	Lpkg::Lpkg parse() {
-		Lpkg::Lpkg result;
-		while (stream.get(currentTok)) {
-			switch (currentTok) {
-				default: {
-					break;
-				}
-				case '#': {
-					std::string comment = runtotok('!');
-					break;
-				}
-				case 's': {
-					std::string strname =
-					    trim(runtotok('"'));
-					std::string strval = runtotok('"');
-					result.insert(
-					    {strname, Lpkg::String(strval)});
-					break;
-				}
-				case 'a': {
-					std::string arrname =
-					    trim(runtotok('('));
-					std::vector<std::string> arrvals;
-					while (true) {
-						runtotok('"');
-						arrvals.push_back(
-						    runtotok('"'));
-						if (stream.peek() == ')') {
-							break;
-						}
-					}
-					result.insert(
-					    {arrname, Lpkg::Array(arrvals)});
-					break;
-				}
-				case 'f': {
-					std::string funcname =
-					    trim(runtotok('{'));
-					std::vector<std::string> funccmds;
-					while (true) {
-						funccmds.push_back(
-						    trim(runtotok('\n')));
-						if (stream.peek() == '}') {
-							break;
-						}
-					}
-					if (funccmds.at(0) == "") {
-						funccmds.erase(
-						    funccmds.begin());
-					}
-					result.insert(
-					    {funcname,
-					     Lpkg::Function(funccmds)});
-					break;
-				}
+	ParseLpkg(std::string filename)
+	    : filename(filename) {}
+	Lpkg parse() {
+		Lpkg result;
+		stream = std::ifstream(filename);
+		result.setFilename(filename);
+		std::string line;
+		std::regex pattern(R"(^[a-zA-Z_][a-zA-Z0-9_]*=)"); 
+		if(stream.good()){
+			while (getline(stream, line)) {
+			if(std::regex_search(line, pattern)){
+				std::vector<std::string> split = splitstr(line, "=");
+				result.addValue(split.at(0), split.at(1));
 			}
 		}
+		}
+		stream.close();
 		return result;
 	}
 };

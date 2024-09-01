@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-message lpkg {
-  string name = 1;
-  string desc = 2;
-  string ver = 3
-  string tarball = 4;
-  
-};

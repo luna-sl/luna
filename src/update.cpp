@@ -2,21 +2,14 @@
 #include "loader.hpp"
 #include "logger.hpp"
 #include "lutils.hpp"
-#include "parseargs.hpp"
-#include <chrono>
-#include <deque>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <thread>
 
 namespace update
 {
-void updateRepos(std::vector<std::string> args)
+void updateRepos()
 {
-	ParseArgs pa;
-	pa.checkUnrecognized(args);
-	pa.parseArgs(args);
 	privEsc();
 	Loader L = Loader();
 	std::function<void()> func = [&]() {

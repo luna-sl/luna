@@ -1,12 +1,8 @@
 #include "doctor.hpp"
 #include "install.hpp"
 #include "logger.hpp"
-#include "lutils.hpp"
-#include "parseargs.hpp"
-#include "parselpkg.hpp"
 #include "update.hpp"
-#include <deque>
-#include <fstream>
+#include <cxxopts.hpp>
 #include <unistd.h>
 #define VERS "v0.1"
 
@@ -21,12 +17,32 @@ int main(int argc, char *argv[])
 	}
 	ARGC = argc;
 	ARGV = argv;
-	std::vector<std::string> arguments(argv + 1, argv + argc);
-	ParseArgs pa;
-	pa.addArgument("-i|--install|install|-S", "installs a package", &install::installPackage);
-	pa.addArgument("-u|--update|update|-y", "updates the repos", &update::updateRepos);
-	pa.addArgument("-d|--doctor|doctor", "performs a lunapm health check", &doctor::runDoctor);
-	pa.setFlags(ParseArgs::STOP_ON_MATCH);
-	log(!pa.parseArgs(arguments), LogLevel::FATAL, "no argument matched");
+	cxxopts::Options options("luna", "luna - lightweight source-based package manager");
+	options.add_options()("i,install", "installs a package", cxxopts::value<std::string>(),
+						  "packagename")("u,update", "updates repository list")(
+		"d,doctor", "check for issues with your luna installation")("h,help", "prints this message");
+	cxxopts::ParseResult result;
+	try {
+		result = options.parse(argc, argv);
+	}catch(cxxopts::exceptions::exception ex){
+		log(LogLevel::FATAL, "failed to parse arguments: {}", ex.what());
+	}
+	if (result.count("help"))
+	{
+		std::cout << options.help() << std::endl;
+		exit(0);
+	}
+	if (result.count("doctor"))
+	{
+		doctor::runDoctor();
+	}
+	if (result.count("update"))
+	{
+		update::updateRepos();
+	}
+	if (result.count("install"))
+	{
+		install::installPackage(result);
+	}
 	return 0;
 }

@@ -2,7 +2,6 @@
 #include "loader.hpp"
 #include "logger.hpp"
 #include "lutils.hpp"
-#include "parseargs.hpp"
 #include <filesystem>
 #include <functional>
 #include <iostream>
@@ -10,10 +9,8 @@
 #include <vector>
 namespace doctor
 {
-void runDoctor(std::vector<std::string> args)
+void runDoctor()
 {
-	ParseArgs pa;
-	pa.checkUnrecognized(args);
 	privEsc();
 	Loader L = Loader();
 	std::function<void()> func = [&]() {

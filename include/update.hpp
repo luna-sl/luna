@@ -5,5 +5,5 @@
 
 namespace update
 {
-void updateRepos(std::vector<std::string> args);
+void updateRepos();
 }

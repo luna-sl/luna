@@ -8,14 +8,14 @@
 #include <algorithm>
 #include <exception>
 #include <fstream>
-#include <parseargs.hpp>
 #include <stdexcept>
 #include <string>
 #include <typeinfo>
 #include <vector>
+#include <cxxopts.hpp>
 namespace install
 {
-void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
+void install(cxxopts::ParseResult args, Lpkg::Lpkg pkg)
 {
 
 	Loader L = Loader();
@@ -53,15 +53,13 @@ void install(std::vector<std::string> args, Lpkg::Lpkg pkg)
 	};
 	L.doLoader(format("installing {}", std::get<Lpkg::String>(pkg.at("name")).getContents()), func);
 }
-void installPackage(std::vector<std::string> args)
+void installPackage(cxxopts::ParseResult args)
 {
 	privEsc();
-	log(LogLevel::DEBUG, "{}", args.at(0));
-	std::ifstream lpkgFile(args.at(0));
+	std::ifstream lpkgFile(args["install"].as<std::string>());
 	if (lpkgFile.good())
 	{
 		Lpkg::Lpkg lpkg = ParseLpkg(lpkgFile).parse();
-		args.erase(args.begin());
 		install(args, lpkg);
 	}
 }

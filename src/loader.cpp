@@ -4,7 +4,6 @@
 #include <chrono>
 #include <functional>
 #include <iostream>
-#include <stdio.h>
 #include <string>
 #include <thread>
 void Loader::doLoader(std::string taskName, std::function<void()> &task)

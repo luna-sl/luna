@@ -2,8 +2,9 @@
 
 #include <string>
 #include <vector>
+#include <cxxopts.hpp>
 
 namespace install
 {
-void installPackage(std::vector<std::string> args);
+void installPackage(cxxopts::ParseResult args);
 }

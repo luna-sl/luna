@@ -5,5 +5,5 @@
 
 namespace doctor
 {
-void runDoctor(std::vector<std::string> args);
+void runDoctor();
 } // namespace doctor

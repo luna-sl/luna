@@ -25,7 +25,9 @@ int main(int argc, char *argv[]) {
 	    "h,help", "prints this message");
 	options.add_options("internal")("fetch-tarball",
 					"fetches a tarball and extracts it.",
-					cxxopts::value<std::string>(), "link");
+					cxxopts::value<std::string>(), "link")(
+	    "make-staging-directory", "creates a package staging directory",
+	    cxxopts::value<std::string>(), "package name");
 	cxxopts::ParseResult result;
 	try {
 		result = options.parse(argc, argv);
@@ -48,6 +50,10 @@ int main(int argc, char *argv[]) {
 	}
 	if (result.count("fetch-tarball")) {
 		fetchTarball(result["fetch-tarball"].as<std::string>());
+	}
+	if (result.count("make-staging-directory")) {
+		makeStagingDir(
+		    result["make-staging-directory"].as<std::string>());
 	}
 	return 0;
 }

@@ -12,9 +12,9 @@ source="https://www.zsh.org/pub/zsh-$version.tar.xz"
 #as is this
 . /etc/luna/make.conf
 
-srcdir=$(luna --fetch-tarball $source)
+srcdir=$(./build/luna --fetch-tarball $source)
+export DESTDIR=$(./build/luna --make-staging-directory $name)
 cd "$srcdir/zsh-$version"
-./configure
+./configure --prefix=/usr/
 make $MAKEFLAGS
-DESTDIR=$(luna --make-staging-directory $name)
 make install

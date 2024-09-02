@@ -7,7 +7,6 @@
 #include <filesystem>
 #include <string>
 void fetchTarball(std::string link) {
-	log(LogLevel::INFO, "downloading tarball");
 	const std::string filename = cpr::util::split(link, '/').back();
 	const std::string foldername = format("/tmp/luna/src/{}/", filename);
 	cpr::Response r = cpr::Get(cpr::Url{link});
@@ -27,6 +26,11 @@ void fetchTarball(std::string link) {
 	} else {
 		log(LogLevel::FATAL, "sourceOut not open");
 	}
-	log(LogLevel::INFO, "extracting");
 	extract((foldername + filename).c_str(), 0, foldername.c_str());
+	log(LogLevel::INFO, foldername);
+}
+void makeStagingDir(std::string name) {
+	std::string directory = format("/tmp/luna/staging/{}", name);
+	std::filesystem::create_directories(directory);
+	log(LogLevel::INFO, directory);
 }

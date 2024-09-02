@@ -142,7 +142,6 @@ void extract(const char *filename, int flags, const char *destdir) {
 	archive_read_support_format_tar(a);
 	archive_read_support_filter_gzip(a);
 	archive_read_support_filter_xz(a);
-	archive_read_support_filter_bzip2(a);
 	/*
 	 * On my system, enabling other archive formats adds 20k-30k
 	 * each.  Enabling gzip decompression adds about 20k.
@@ -164,12 +163,11 @@ void extract(const char *filename, int flags, const char *destdir) {
 			    archive_error_string(a), 1);
 		char *str = (char *)malloc(4096 * sizeof(char));
 		strcpy(str, destdir);
-		log(LogLevel::DEBUG, "{}", archive_entry_pathname(entry));
 		archive_entry_set_pathname(
 		    entry, strcat(str, archive_entry_pathname(entry)));
 		r = archive_write_header(ext, entry);
 		if (r != ARCHIVE_OK)
-			log(LogLevel::WARN, "Extraction warning @ {}, {}",
+			log(LogLevel::FATAL, "Extraction fail @ {}, {}",
 			    "archive_write_header()",
 			    archive_error_string(ext));
 		else {

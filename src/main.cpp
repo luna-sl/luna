@@ -28,6 +28,9 @@ int main(int argc, char *argv[]) {
 					cxxopts::value<std::string>(), "link")(
 	    "make-staging-directory", "creates a package staging directory",
 	    cxxopts::value<std::string>(), "package name");
+	options.add_options("install")("make-binpkg",
+				       "creates a binary package tarball to be "
+				       "installed on another luna system");
 	cxxopts::ParseResult result;
 	try {
 		result = options.parse(argc, argv);

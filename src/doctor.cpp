@@ -19,6 +19,11 @@ void runDoctor() {
 			L.setProgress("creating /etc/luna/");
 			std::filesystem::create_directory("/etc/luna");
 		}
+		if (!std::filesystem::exists("/usr/pkg")) {
+			++issues;
+			L.setProgress("creating /usr/pkg");
+			std::filesystem::create_directory("/usr/pkg");
+		}
 		if (!std::filesystem::exists("/var/lib/luna/repos.d/")) {
 			++issues;
 			L.setProgress("creating /var/lib/luna/repos.d/");

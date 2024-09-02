@@ -45,12 +45,17 @@ void install(cxxopts::ParseResult args, Lpkg pkg) {
 		     std::filesystem::recursive_directory_iterator(targetDir)) {
 			std::filesystem::directory_entry dest(
 			    replace(dirEntry.path(), targetDir, ""));
-			log(LogLevel::DEBUG, dirEntry.path());
 			if (dirEntry.is_regular_file()) {
-				std::filesystem::remove(dest.path());
-				std::filesystem::create_symlink(dirEntry.path(),
-								dest.path());
-			} else if (dirEntry.is_directory() && !dest.exists()) {
+				if (args.count("pretend")) {
+					log(LogLevel::INFO, "{} -> {}",
+					    dirEntry.path(), dest.path());
+				} else {
+					std::filesystem::remove(dest.path());
+					std::filesystem::create_symlink(
+					    dirEntry.path(), dest.path());
+				}
+			} else if (dirEntry.is_directory() && !dest.exists() &&
+				   !args.count("pretend")) {
 				std::filesystem::create_directories(
 				    dest.path());
 			}

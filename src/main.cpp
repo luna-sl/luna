@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
 	    cxxopts::value<std::string>(), "package name");
 	options.add_options("install")("make-binpkg",
 				       "creates a binary package tarball to be "
-				       "installed on another luna system");
+				       "installed on another luna system")(
+	    "pretend", "pretends to install the package to the main system.");
 	cxxopts::ParseResult result;
 	try {
 		result = options.parse(argc, argv);
